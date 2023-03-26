@@ -1,0 +1,58 @@
+Ceau Ionuț...
+
+Am creat cont pe github, pentru că era gratuit, pe vitor am să fac și gitlab, am vrut să nu am grija că î-mi va expira în câteva săptămâni că vreau să învăț git.
+Până acum mi se pare mai dificil decât ar avea nevoie să fie.  O oră am tot încercat să execut comanda "git push --set-upstream origin master", care apoi î-mi cere username/password, care dacă le introduc primesc mesajul "remote: Support for password authentication was removed on August 13, 2021.", și încă unul care mă trimite la un link, unde aflu că defapt password trebuie să fie un Personal-Access-Token, care l-am și generat, am mai încercat odată "git push ...", cu acel PAT în loc de password, dar tot acel rezultat.
+Am urmat tutorialele cu mare atenție, dar nu mi-a mers.  Poate că azi nu am noroc.
+
+Totuși, am putut să atașez fișierul din interfața web, așa că...
+
+Programul sw (stopwatch), este nemodificat/neredactat, de la ultima versiune... sper că nu am înjurat/atașat ceva secret acolo ;)
+
+Scopul programului: am vrut să am un cronometru simpluț, cu câteva funcții particulare (features), dar în principal am vrut să funcționeze din consolă (eg. linux CTRL-ALT-F2), sau din single user mode (când nu este Display Server eg. Xorg, și este doar utilizatorul root), mai mult am vrut să pot folosii tastele pentru a-l putea porni/opri/reseta/afișa-ajutor/etc. așa că a trebuit ncurses, că nu cunosc așa de bine termcap (terminal capabilities, eg. \033[31m în terminal va începe scrisul cu culoarea roșu).
+
+Ca să te ajut să-l înțelegi mai ușor, codul este structurat astfel:
+line 2: aici am scris tot felul de idei ce aveam pentru versiunile viitoare, dar se pare nu au fost importante că programul a rămas neschimbat de doi ani!
+line 13,15: bibleotecile de care depinde programul, ncurses, restul îs incluse deja cu python2.7
+line 21: această funcție este cea care va fi afișată dacă execuți "sw -h", și ea descrie parametrii CLI
+line 42: niște funcții alandala, ordinea nu ma interesat
+line 106: clasa Stopwatch, inima acestui program, folosit mai mult ca un fel de a organiza mai multe funcții asemănătoare, nu prea demonstreză conceptele OOP
+line 195: funcții aruncate alandala ce țin de Text User Interface (TUI)
+line 251: această funcție face posibiă afișarea și controlul prin tastatură, este Event Driven Programming cam ca și cu aplicațiile GUI, am avut nevoie de ea ca să pot face bind-uri pe taste
+
+Dacă vrei să încerci programul trebuie să îi dai atributul de executare:
+chmod 700 sw
+
+Programul este scris în python2.7, care este versiune mai veche, în linux-urile noi python este un symbolic-link (ln -s) la python3.X, iar dacă execuții sar putea să primești erori pentru declarațile print (o schimbare mare de la python 2 la 3 este aceea că funcția print înainte "print 'looks like a declaration'", a devenit "print('looks like a function')) 
+Ce recomand e să schimbi shabang-ul (primul rând din cod, cel care începe cu #!) la  #! ... python2.7   
+Sau "python2.7 sw [<argumente>]"
+
+Acum poți să-l execuți cu (nu are rost să-l pornești direct din Filemanager, pentru că nu va porni, sw trebuie neapărat executat într-un terminal):
+./sw
+
+Exemplul din urmă, î-ți pornește un singur cronometru de la 0:0:0, și are numele Stopwatch 1, ca să vezi ce poți face apasă h: s - î-ți salvează un fișier text în /tmp, space pune pe pauză/continuă, etc.  Când vrei să î-l închizi: am dezactivat CTRL-C din motive bune, Esc idem nu face nimic, nu doream să-l închid din accident, pentru al închide trebuie să tastezi QY.
+
+Iată un alt exemplu:
+
+sw -mpl Work -c 1:2:3     # aici consider că sw se află în o locație care se găsește 
+                          #+ în variabila environment $PATH, deci nu mai folosim ./
+
+Aici vei pornii un cronometru, care afișează doar cifre, nu ascii-art (-F), dar rămâne inițial pe pauză (-p), are denumirea Work (-l Work), și pornește de la 1:02:03, bineînțeles se putea obține același rezultat și prin:
+
+sw -m -p -l Work -c 1:02:03
+
+Iar ultimul exemplu demonstrează feature-ul meu preferat:
+
+sw -ml "Rest;Aerobic exercise;Cardio"     # ghilimelele sunt obligatorii chiar dacă 
+                                          #+ argumentul nu are spații, shell-ul interpretează ; 
+                                          #+ ca sfârșit de declarație, iar de ce am ales punct-virbulă 
+                                          #+ ca delimitare nu mai țin minte, că mă gândesc 
+                                          #+ poate că era mai bine să fac altfel
+
+O să vezi 3 cronometre, unul Rest, altul "Aerobic exercise", iar ultimul Cardio.  Folosește tasta 1,2,3 să vezi ce face.
+
+
+Am lucrat la acest program aproape 2 săptămâni, vreo 40 de ore, în aprilie 2020, inițial am vrut ceva simplu, dar pe parcursul zilelor mi-au venit tot mai multe idei, și tot am restructurat codul, regândit abordarea.  Acesta prezintă unul din cele mai complexe programe pe care le-am scris, celelalte 2 nu sunt așa de interesante, și nu le-am mai folosit de ani, în schimb sw îl folosesc zilnic.  După cum se vede idea este că se configurează prin parametri CLI, nu are bară de meniu, checkbox-uril, consider că este ceva mai convenabil decât un cronometru "grafic" care are butoane care trebuie apăsate cu mouse, ce mai aș fi adăugat ar fi fost un mijloc de a schimba bind-urile tastelor și setările implicite un .swrc (ca și în .bashrc), dar programul este așa de simplu că îl poți face direct din program, alt avantaj al limbajelor interpretate :)
+
+Sincer nu am crezut că voi arăta sw la un alt programator, am crezut că voi avea alte programe mai bune, iar de aceea nici nu mi-am făcut probleme să urmez niște convenți uzuale: desparte rândurile la 89 coloane, o declarație pe un singur rând, herestring la fiecare funcție, bla bla.
+
+Dă-ți te rog o părere, și o critică constructivă.  Î-ți mulțumesc foarte mult!
