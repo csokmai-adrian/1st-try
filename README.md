@@ -6,6 +6,7 @@ If somebody stumbles upon this, hi!, I don't have anything of interest here, I j
 * __bold text__, and another **bold text**
 * __italic text__, and more _italic text_
 * ~~strike~~
+* [google]: https://www.google.com
 * [ ] this 
 * [x] that
 ## 2. figure the darn token
