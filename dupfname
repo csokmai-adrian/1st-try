@@ -1,0 +1,18 @@
+#!/usr/bin/python3
+
+# argv[0] - list all files with identical filenames in the current working directory (and his subdirectories)
+
+import os
+
+FILES = dict()
+for root, dirs, files in os.walk('.'):
+    for f in files:
+        FILES.setdefault(f, list())
+        FILES[f].append(os.path.join(root, f))
+
+for k,v in FILES.items():
+    if not len(v) > 1: continue
+    print(len(v), 'files with the same name:')
+    for f in v:
+        print('\t', f)
+    print()
