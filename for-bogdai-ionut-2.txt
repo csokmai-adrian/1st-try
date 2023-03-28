@@ -1,0 +1,49 @@
+Sa nimerit că am avut nevoie de un progrămel... dupfname (duplicate filenames).  Am o clientă pentru care tot am descărcat muzică, și acum trebuia să îi copiez toate melodiile, împreună cu cele de demult, și m-am lovit de problema asta: că are multe dubluri dar nu pot să le determin după valoarea lor hash, că în unele cazuri 2 melodii cu același titlu care era aceeași melodie avea o compoziție în bit diferită (datorat compresie ffmpeg), așa că a trebuit să-mi fac rapid un progrămel care să facă așa ceva:
+
+
+2 files with the same name:
+	 ./altele/Michael Calfan_Resurrection (Axwell's Re-Cut Club Version).mp3
+	 ./altele_sandisk/Michael Calfan_Resurrection (Axwell's Re-Cut Club Version).mp3
+
+2 files with the same name:
+	 ./altele/Milky Chance_Down by the river.mp3
+	 ./altele_sandisk/Milky Chance_Down by the river.mp3
+
+...
+
+3 files with the same name:
+	 ./altele/Folder nou/Dmitry Glushkov - It's deep, it's love (Original mix).mp3
+	 ./altele_kingston/Dmitry Glushkov - It's deep, it's love (Original mix).mp3
+	 ./altele_sandisk/Dmitry Glushkov - It's deep, it's love (Original mix).mp3
+
+...
+
+Am deschis vim, și în nici 20 de minute, am terminat, și culmea funcționează! :)
+Bineânțeles dupfname, nu-ți șterge, el numai listează.  Așa că mai departe am procedat astfel, am salvat rezultatul în două exemplare:
+
+        $ dupfname | tee /tmp/{1,2}
+
+am deschis cu editorul unul dintre ele, și am făcut câte o schimbare mică la fiecare rând cu fișierul pe care aveam în gând să șterg:
+
+        $ vim /tmp/2
+
+afișăm diferența celor două fișiere direct în sed (stream editor), care va transforma fiecare rând într-o comandă... fiecare rând va arăta așa ceva 'mv -iv "<FIȘIER>" ../dups' și va fi listat în move_dups:
+
+        $ diff --changed-group-format='%<' --unchanged-group-format='' 1 2| \
+                sed 's/^/mv -iv "/;s/$/" ..\/dups/' \
+                > move_dups
+
+și dăm bătaie:
+
+        $ bash move_dups      # nu trebuie să setăm atributul x pentru asta
+        $ rm /tmp/{1,2} move_dups   # ștergem rezidul
+
+Gata!
+
+
+Sunt înebunit după CLI, e ridicol că lumea nu știe de el și nici de ar știi nu l-ar învăța, preferând să lucreze din GUI-urile lor frumoase dar slăbuțe.
+
+Am vrut să ți-l arăt pentr-u că comparat cu sw, acesta este mai puțin versatil, nu poți schimba felul cum funcționează, dar asta nu înseamnă că nu-l poți combina cu diff/sed/mv/etc. să facă mai multe.  Sau puteam să modific direct din codul, dacă adăugam încă 3 rândurii, puteam să fac să se șteargă dublurile și să lase numai una afară.
+Pentru astfel de progrămele m-am apucat de programare în 2012, puteam să stau să caut pe net cu orele "software remove files identical filenames", dar poate că î-mi lua mai mult căutatul/încercatul.
+
+
